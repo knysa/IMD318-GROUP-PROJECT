@@ -1,0 +1,73 @@
+CREATE TABLE `users` (
+	`id` INT(10) NOT NULL AUTO_INCREMENT,
+	`username` VARCHAR(50) NOT NULL COLLATE 'utf8mb4_0900_ai_ci',
+	`password` VARCHAR(255) NOT NULL COLLATE 'utf8mb4_0900_ai_ci',
+	`email` VARCHAR(100) NOT NULL DEFAULT '' COLLATE 'utf8mb4_0900_ai_ci',
+	`phone` VARCHAR(15) NOT NULL COLLATE 'utf8mb4_0900_ai_ci',
+	PRIMARY KEY (`id`) USING BTREE,
+	UNIQUE INDEX `username` (`username`) USING BTREE
+)
+COLLATE='utf8mb4_0900_ai_ci'
+ENGINE=InnoDB
+AUTO_INCREMENT=12
+;
+
+
+CREATE TABLE `orders` (
+	`id` INT(10) NOT NULL AUTO_INCREMENT,
+	`total_price` DECIMAL(10,2) NULL DEFAULT NULL,
+	`created_at` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+	`user_id` INT(10) NULL DEFAULT NULL,
+	PRIMARY KEY (`id`) USING BTREE,
+	INDEX `fk_user_orders` (`user_id`) USING BTREE,
+	CONSTRAINT `fk_user_orders` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE,
+	CONSTRAINT `orders_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON UPDATE NO ACTION ON DELETE NO ACTION
+)
+COLLATE='utf8mb4_0900_ai_ci'
+ENGINE=InnoDB
+AUTO_INCREMENT=45
+;
+
+
+CREATE TABLE `order_items` (
+	`id` INT(10) NOT NULL AUTO_INCREMENT,
+	`order_id` INT(10) NULL DEFAULT NULL,
+	`item_name` VARCHAR(255) NULL DEFAULT NULL COLLATE 'utf8mb4_0900_ai_ci',
+	`item_price` DECIMAL(10,2) NULL DEFAULT NULL,
+	`quantity` INT(10) NULL DEFAULT '1',
+	`user_id` INT(10) NULL DEFAULT NULL,
+	PRIMARY KEY (`id`) USING BTREE,
+	INDEX `order_id` (`order_id`) USING BTREE,
+	INDEX `fk_user_order_items` (`user_id`) USING BTREE,
+	CONSTRAINT `fk_user_order_items` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON UPDATE NO ACTION ON DELETE CASCADE,
+	CONSTRAINT `order_items_ibfk_1` FOREIGN KEY (`order_id`) REFERENCES `orders` (`id`) ON UPDATE NO ACTION ON DELETE NO ACTION
+)
+COLLATE='utf8mb4_0900_ai_ci'
+ENGINE=InnoDB
+AUTO_INCREMENT=149
+;
+
+
+CREATE TABLE `payments` (
+	`id` INT(10) NOT NULL AUTO_INCREMENT,
+	`order_id` INT(10) NOT NULL,
+	`user_id` INT(10) NOT NULL,
+	`name` VARCHAR(255) NOT NULL COLLATE 'utf8mb4_0900_ai_ci',
+	`phone` VARCHAR(20) NOT NULL COLLATE 'utf8mb4_0900_ai_ci',
+	`address` VARCHAR(255) NOT NULL COLLATE 'utf8mb4_0900_ai_ci',
+	`account_number` VARCHAR(50) NOT NULL COLLATE 'utf8mb4_0900_ai_ci',
+	`reference` VARCHAR(50) NOT NULL COLLATE 'utf8mb4_0900_ai_ci',
+	`bank` VARCHAR(50) NOT NULL COLLATE 'utf8mb4_0900_ai_ci',
+	`total_price` DECIMAL(10,2) NOT NULL,
+	`payment_date` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+	PRIMARY KEY (`id`) USING BTREE,
+	INDEX `order_id` (`order_id`) USING BTREE,
+	INDEX `user_id` (`user_id`) USING BTREE,
+	CONSTRAINT `payments_ibfk_1` FOREIGN KEY (`order_id`) REFERENCES `orders` (`id`) ON UPDATE NO ACTION ON DELETE NO ACTION,
+	CONSTRAINT `payments_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON UPDATE NO ACTION ON DELETE NO ACTION
+)
+COLLATE='utf8mb4_0900_ai_ci'
+ENGINE=InnoDB
+AUTO_INCREMENT=11
+;
+
